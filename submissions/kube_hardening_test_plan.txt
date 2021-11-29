@@ -1,0 +1,6 @@
+
+Question - How will you test the changes and how will you ensure the changes don't negatively affect your cluster ?
+I will recommend first understand what need to be improve by running kube-bench to see all the current fail checks. 
+The change will be tested in a non-production environment such as a test cluster.You can setup a virtual sandbox environment to conduct testing, as the environement will be similar to the production environement.
+We can slowly introduct the changes alternatively we can setup observability using Prometheus where we can monitor the performance, 
+using this method we can also collect traces to know what is causing the problems. We can also setup regression tests so that we can catch the issue when there is a fail test.

@@ -1,0 +1,23 @@
+1.Incident commander name
+  Noel Lou
+
+2.Executive summary of what happened
+   - There was an attack where the attacker deploy 3 different crypto miner pods. 
+   - The 3 pods take up majority of the cluster CPU which impacted the client normal services.
+
+3.Summary of what was affected
+   - The attacker was able to access the cluster to run their mining software which heavily utilized the cluster.
+   - This will cause the service request for client to slow down greatly. 
+
+4.Summary of the impact
+  Gafana dashboard shows that the CPU usage produced spikes when the attacker access the cluster and run the software.
+
+5.Summary of the remediation steps
+   - The administrator can force delete pods from the cluster: kubectl --kubeconfig kube_config_cluster.yml delete pod <pod_name> --grace-period=0 --force
+   - The administrator can limit admin access to the resources
+   - The administrator can check CPU usage back to normal
+
+6.Summary of lessons learned
+    - Cluster should be harden with tighten/restrict of priviledge access to the Kubernetes API server.
+    - Admission can disallow malicious images to be used to create containers.
+    - We can set alert if the CPU goes up to 100%. This is use to notify admin if there is a surge of event in unusual activities.

@@ -1,0 +1,60 @@
+Docker Threat Modeling
+Given Docker's system components and the STRIDE framework, identify five potential threats that may arise.
+1. Spoofing: - An image may be spoofed with malicious images or libaries. This can potientially allow attacker gain admin access to manipulate of the docker image.
+
+2. Tampering: - Attacker may hijack the docker client to pull down an image with malware attached due to misconfiguration of docker.
+
+3. Denial of Service: - Attacker launch flood attacked to the client application causing excessive traffic which will overload and crash. Casuing the client service unable to function.
+
+4. Elevation of Privilege: - By giving a container image elevated privileges via the flag --privilege, can be a potential risk as it allows attacker gain access to more things in the container, such as access to the malicious images/containers.
+
+5. Information Disclosure: - Due to insecure daemon configuration file. Attacker may access daemon file configuration and make changes to the information of daemon file.
+
+
+Kubernetes Threat Modeling
+Given Kubernetes' system components and the STRIDE framework, identify five potential threats that may arise.
+
+1. Repudiation: - The Attacker might make unauthorized change to the kubelet. Repudiation can happen as we are unsure who have made the change.
+
+2. Tampering: - The Attacker may access kubernetes and modify the pod specs and install malware in the pods
+
+3. Elevation of Privilege: - Having malicious containers, Attacker can use the privileged flag to cause kube apiserver configuration mismatch and not able to verify kubelets.
+
+4. Information Disclosure: - Attacker may access sensitive information such as key-value store via the etcd of kube proxy
+
+5. Denial of Service: - Attacker may flood attacked the pods with excessive traffic causing cluster api unable to serve legitimate requests.
+
+
+Docker-bench Run Results and Analysis
+From the failed findings, select and document 3 findings from the Docker-bench results that you want to harden based on the 5 attack surface areas you identified in Step 1. At least 1 of the 3 hardened findings should be different from the ones mentioned in the exercise (i.e. 5.10, 5.14, and 5.22).
+
+Remediating Findings from Docker-bench
+
+1. - [FAIL] 4.5 Ensure Content trust for Docker is Enabled (Scored)
+----------Remediating Steps---------------
+Run - echo $DOCKER_CONTENT_TRUST
+Run - export DOCKER_CONTENT_TRUST=1
+
+2. - [FAIL] 1.2.4 Ensure auditing is configured for Docker files and directories - /var/lib/docker (Scored)
+3. - [FAIL] 1.2.5 Ensure auditing is configured for Docker files and directories - /etc/docker (Scored)
+4. - [FAIL] 1.2.6 Ensure auditing is configured for Docker files and directories - docker.service (Scored)
+5. - [FAIL] 1.2.8 Ensure auditing is configured for Docker files and directories - /etc/default/docker (Scored)
+6. - [FAIL] 1.2.9 Ensure auditing is configured for Docker files and directories - /etc/sysconfig/docker (Scored)
+----------Remediating Steps---------------
+Run - zypper install audit
+Run - sudo edit /etc/audit/audit.rules
+
+inside the edit file insert the following below
+-w /usr/bin/docker -k docker
+-w /var/lib/docker -k docker
+-w /etc/docker -k docker
+-w /usr/lib/systemd/system/docker-registry.service -k docker
+-w /usr/lib/systemd/system/docker.service -k docker
+-w /var/run/docker.sock -k docker
+-w /etc/sysconfig/docker -k docker
+-w /etc/sysconfig/docker-network -k docker
+-w /etc/sysconfig/docker-registry -k docker
+-w /etc/sysconfig/docker-storage -k docker
+-w /etc/default/docker -k docker
+
+Run - service auditd restart
